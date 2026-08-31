@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
@@ -18,7 +18,7 @@ with app.app_context():
 
 @app.route('/')
 def home():
-    return "Hello, backend world!"
+    return render_template('index.html')
 
 @app.route("/api/signup", methods=["POST"])
 def signup():

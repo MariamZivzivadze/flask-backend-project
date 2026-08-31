@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Backend Project</title>
+</head>
+<body>
+    <h1>Sign Up</h1>
+    <input id="signupName" placeholder="Name">
+    <input id="signupEmail" placeholder="Email">
+    <input id="signupPassword" placeholder="Password" type="password">
+    <button onclick="signup()">Sign Up</button>
+
+    <h1>Login</h1>
+    <input id="loginEmail" placeholder="Email">
+    <input id="loginPassword" placeholder="Password" type="password">
+    <button onclick="login()">Login</button>
+    <p id="loginResult"></p>
+
+    <h1>All Users</h1>
+    <button onclick="getUsers()">Refresh Users</button>
+    <ul id="userList"></ul>
+
+    <script>
+        async function signup() {
+            const res = await fetch('/api/signup', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    name: document.getElementById('signupName').value,
+                    email: document.getElementById('signupEmail').value,
+                    password: document.getElementById('signupPassword').value
+                })
+            });
+            const data = await res.json();
+            alert(data.message || data.error);
+            getUsers();
+        }
+
+        async function login() {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email: document.getElementById('loginEmail').value,
+                    password: document.getElementById('loginPassword').value
+                })
+            });
+            const data = await res.json();
+            document.getElementById('loginResult').innerText = data.message || data.error;
+        }
+
+        async function getUsers() {
+            const res = await fetch('/api/users');
+            const data = await res.json();
+            const list = document.getElementById('userList');
+            list.innerHTML = '';
+            data.forEach(u => {
+                const li = document.createElement('li');
+                li.innerText = `${u.id}: ${u.name} (${u.email})`;
+                list.appendChild(li);
+            });
+        }
+
+        getUsers();
+    </script>
+</body>
+</html>
