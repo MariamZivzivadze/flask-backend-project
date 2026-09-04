@@ -1,9 +1,15 @@
+import os
+from dotenv import load_dotenv
 from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from errors import InvalidCredentialsError
+
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
@@ -15,6 +21,10 @@ class User(db.Model):
 
 with app.app_context():
     db.create_all()
+
+@app.errorhandler(InvalidCredentialsError)   
+def handle_invalid_credentials(error):
+    return {"error": str(error)}, 401
 
 @app.route('/')
 def home():
@@ -33,9 +43,9 @@ def signup():
 def login():
     data = request.get_json()
     user = User.query.filter_by(email=data['email']).first()
-    if user and bcrypt.check_password_hash(user.password, data['password']):
-        return {"message": f"Welcome back, {user.name}!"}
-    return {"error": "Invalid email or password"}, 401
+    if user or not bcrypt.check_password_hash(user.password, data['password']):
+        raise InvalidCredentialsError("Invalid email or password")
+    return {"message": f"Welcome back, {user.name}!"}
 
 @app.route("/api/users")
 def get_users():
@@ -44,3 +54,4 @@ def get_users():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
