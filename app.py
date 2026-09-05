@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request, render_template
 from errors import InvalidCredentialsError, UserAlreadyExistsError
-from extensions import db, bcrypt
 from models import User
 from auth import auth_bp
 from extensions import db, bcrypt, limiter
