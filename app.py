@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, request, render_template
-from errors import InvalidCredentialsError
+from errors import InvalidCredentialsError, UserAlreadyExistsError
 from extensions import db, bcrypt
 from models import User
 from auth import auth_bp
@@ -22,6 +22,10 @@ with app.app_context():
 @app.errorhandler(InvalidCredentialsError)   
 def handle_invalid_credentials(error):
     return {"error": str(error)}, 401
+
+@app.errorhandler(UserAlreadyExistsError)
+def handle_user_already_exists(error):
+    return {"error": str(error)}, 409
 
 @app.route('/')
 def home():

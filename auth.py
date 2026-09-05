@@ -1,12 +1,17 @@
 from flask import Blueprint, request
 from extensions import db, bcrypt
 from models import User
-from errors import InvalidCredentialsError
+from errors import InvalidCredentialsError, UserAlreadyExistsError
 
 auth_bp = Blueprint('auth', __name__)
+
 @auth_bp.route("/api/signup", methods=["POST"])
 def signup():
     data = request.get_json()
+    existing_user = User.query.filter_by(email=data['email']).first()
+    if existing_user:
+        raise UserAlreadyExistsError("A user with this email already exists")
+    
     hashed_pw = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     new_user = User(name=data['name'], email=data['email'], password=hashed_pw)
     db.session.add(new_user)
