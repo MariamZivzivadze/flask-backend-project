@@ -5,13 +5,14 @@ from errors import InvalidCredentialsError, UserAlreadyExistsError
 from extensions import db, bcrypt
 from models import User
 from auth import auth_bp
+from extensions import db, bcrypt, limiter
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-
+limiter.init_app(app)
 db.init_app(app)
 bcrypt.init_app(app)
 app.register_blueprint(auth_bp)

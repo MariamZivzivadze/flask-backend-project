@@ -1,7 +1,7 @@
 from flask import Blueprint, request
-from extensions import db, bcrypt
 from models import User
 from errors import InvalidCredentialsError, UserAlreadyExistsError
+from extensions import db, bcrypt, limiter
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -19,9 +19,10 @@ def signup():
     return {"message": f"Welcome, {new_user.name}! Saved with ID {new_user.id}"}, 201
 
 @auth_bp.route("/api/login", methods=["POST"])
+@limiter.limit("5 per minute")
 def login():
     data = request.get_json()
     user = User.query.filter_by(email=data['email']).first()
     if not user or not bcrypt.check_password_hash(user.password, data['password']):
         raise InvalidCredentialsError("Invalid email or password")
-    return {"message": f"Welcome back, {user.name}!"}
+    return {"message": f"Welcome back, {user.name}!"}, 200
