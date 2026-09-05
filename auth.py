@@ -16,7 +16,7 @@ def signup():
     new_user = User(name=data['name'], email=data['email'], password=hashed_pw)
     db.session.add(new_user)
     db.session.commit()
-    return {"message": f"Welcome, {new_user.name}! Saved with ID {new_user.id}"}
+    return {"message": f"Welcome, {new_user.name}! Saved with ID {new_user.id}"}, 201
 
 @auth_bp.route("/api/login", methods=["POST"])
 def login():
