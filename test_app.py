@@ -35,3 +35,35 @@ def test_signup_duplicate_email(client):
         "password": "anotherpass456"
     })
     assert response.status_code == 409
+
+def test_login_success(client):
+    client.post('/api/signup', json={
+        "name": "Login User",
+        "email": "login@example.com",
+        "password": "correctpass"
+    })
+    response = client.post('/api/login', json={
+        "email": "login@example.com",
+        "password": "correctpass"
+    })
+    assert response.status_code == 200
+    assert b"Welcome back" in response.data
+
+def test_login_wrong_password(client):
+    client.post('/api/signup', json={
+        "name": "Login User",
+        "email": "login2@example.com",
+        "password": "correctpass"
+    })
+    response = client.post('/api/login', json={
+        "email": "login2@example.com",
+        "password": "wrongpass"
+    })
+    assert response.status_code == 401
+
+def test_login_nonexistent_user(client):
+    response = client.post('/api/login', json={
+        "email": "doesnotexist@example.com",
+        "password": "whatever"
+    })
+    assert response.status_code == 401
