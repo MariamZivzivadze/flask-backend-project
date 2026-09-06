@@ -43,6 +43,17 @@ def get_users():
 def handle_missing_field(error):
     return {"error": str(error)}, 400
 
+@app.route("/api/posts", methods=["POST"])
+def create_post():
+    data = request.get_json(silent=True)
+    if not data or not all(k in data for k in ("title", "content", "user_id")):
+        raise MissingFieldError("Request must include title, content, and user_id")
+
+    new_post = Post(title=data['title'], content=data['content'], user_id=data['user_id'])
+    db.session.add(new_post)
+    db.session.commit()
+    return {"message": f"Post '{new_post.title}' created", "id": new_post.id}, 201
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
   
