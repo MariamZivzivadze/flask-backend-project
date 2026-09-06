@@ -1,3 +1,4 @@
+"""Flask application entry point: routes, config, and error handlers."""
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
