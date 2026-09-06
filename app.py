@@ -1,3 +1,5 @@
+"""Flask application entry point: routes, config, and error handlers."""
+
 import os
 from dotenv import load_dotenv
 from flask import Flask, request, render_template

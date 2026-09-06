@@ -1,6 +1,8 @@
+"""Flask application entry point: routes, config, and error handlers."""
 class UserNotFoundError(Exception):
     """Raised when a requested user does not exist."""
     pass
+
 
 class InvalidCredentialsError(Exception):
     """Raised when login credentials are invalid."""

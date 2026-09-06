@@ -1,3 +1,5 @@
+"""Flask application entry point: routes, config, and error handlers."""
+
 from flask import Blueprint, request
 from models import User
 from errors import InvalidCredentialsError, MissingFieldError, UserAlreadyExistsError
