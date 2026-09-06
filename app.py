@@ -5,6 +5,7 @@ from errors import InvalidCredentialsError, UserAlreadyExistsError
 from models import User
 from auth import auth_bp
 from extensions import db, bcrypt, limiter
+from errors import MissingFieldError
 
 load_dotenv()
 
@@ -35,6 +36,10 @@ def home():
 def get_users():
     users = User.query.all()
     return [{"id": u.id, "name": u.name, "email": u.email} for u in users]
+
+@app.errorhandler(MissingFieldError)
+def handle_missing_field(error):
+    return {"error": str(error)}, 400
 
 if __name__ == '__main__':
     app.run(debug=True)

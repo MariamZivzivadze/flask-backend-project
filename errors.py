@@ -9,3 +9,7 @@ class InvalidCredentialsError(Exception):
 class UserAlreadyExistsError(Exception):
     """Raised when a signup attempt is made with an email that already exists."""
     pass
+
+class MissingFieldError(Exception):
+    """Raised when a request is missing one or more required fields."""
+    pass
